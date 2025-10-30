@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: notice-service
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: validate
+    show-sql: ${SHOW_SQL:false}
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        jdbc:
+          batch_size: 20
+        order_inserts: true
+        order_updates: true
+
+# Feign Client Configuration
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+
+      case-service:
+        connectTimeout: 5000
+        readTimeout: 10000
+      template-service:
+        connectTimeout: 5000
+        readTimeout: 10000
+      communication-service:
+        connectTimeout: 5000
+        readTimeout: 10000
+
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+
+
