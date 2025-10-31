@@ -1,7 +1,4 @@
 spring:
-  profiles:
-    active: staging
-
   application:
     name: common-config
 
