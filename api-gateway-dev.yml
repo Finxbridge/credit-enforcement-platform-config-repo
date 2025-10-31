@@ -1,10 +1,23 @@
+server:
+  port: ${SERVER_PORT:8080}
+
 spring:
+  application:
+    name: api-gateway
+
+  config:
+    import: "configserver:http://config-server:8888/"
+
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:staging}
+
   cloud:
     gateway:
+      # --- CORS Configuration ---
       globalcors:
         corsConfigurations:
           '[/**]':
-            allowedOrigins: "${CORS_ALLOWED_ORIGINS:http://localhost:8081}"
+            allowedOrigins: "${CORS_ALLOWED_ORIGINS:https://staging.yourdomain.com}"
             allowedMethods:
               - GET
               - POST
@@ -14,10 +27,14 @@ spring:
             allowedHeaders: "*"
             allowCredentials: true
             maxAge: 3600
+
+      # --- Route Discovery ---
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
+
+      # --- Service Routes ---
       routes:
         - id: access-management-auth
           uri: lb://access-management-service
@@ -42,7 +59,6 @@ spring:
           filters:
             - StripPrefix=0
             - Authentication
-
 
         - id: notice-service
           uri: lb://notice-service
@@ -75,25 +91,22 @@ spring:
           filters:
             - StripPrefix=0
 
+      # --- Common Gateway Config ---
       default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin\
-        
-      # Allow multipart file forwarding
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       httpclient:
         wiretap: true
         response-timeout: 300s
         max-header-size: 16KB
- 
       forwarded-headers-strategy: framework
- 
+
   servlet:
     multipart:
       enabled: true
       max-file-size: 50MB
       max-request-size: 50MB
 
-
-
+# --- Resilience4j for Gateway Stability ---
 resilience4j:
   circuitbreaker:
     instances:
@@ -107,9 +120,7 @@ resilience4j:
         failureRateThreshold: 50
         eventConsumerBufferSize: 10
 
-cors:
-  allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:8081}
-
+# --- JWT Configuration for Token Validation ---
 jwt:
   secret: ${JWT_SECRET:MySecretKeyForJWTTokenGenerationMustBeAtLeast256BitsLongForHS256Algorithm}
-  expiration: ${JWT_EXPIRATION:86400000} # 24 hours in milliseconds  
+  expiration: ${JWT_EXPIRATION:86400000} # 24 hours in milliseconds
