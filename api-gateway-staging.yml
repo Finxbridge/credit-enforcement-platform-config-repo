@@ -5,36 +5,22 @@ spring:
   application:
     name: api-gateway
 
-  config:
-    import: "configserver:http://config-server:8888/"
-
-  profiles:
-    active: ${SPRING_PROFILES_ACTIVE:staging}
-
   cloud:
     gateway:
-      # --- CORS Configuration ---
-      globalcors:
-        corsConfigurations:
-          '[/**]':
-            allowedOrigins: "${CORS_ALLOWED_ORIGINS:https://staging.yourdomain.com}"
-            allowedMethods:
-              - GET
-              - POST
-              - PUT
-              - DELETE
-              - OPTIONS
-            allowedHeaders: "*"
-            allowCredentials: true
-            maxAge: 3600
-
-      # --- Route Discovery ---
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
 
-      # --- Service Routes ---
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "${CORS_ALLOWED_ORIGINS:https://staging.yourdomain.com}"
+            allowedMethods: [GET, POST, PUT, DELETE, OPTIONS]
+            allowedHeaders: "*"
+            allowCredentials: true
+            maxAge: 3600
+
       routes:
         - id: access-management-auth
           uri: lb://access-management-service
@@ -50,23 +36,6 @@ spring:
           filters:
             - StripPrefix=2
             - Authentication
-            - RemoveRequestHeader=Content-Length
-
-        - id: case-service
-          uri: lb://case-service
-          predicates:
-            - Path=/api/v1/cases/**,/api/v1/campaigns/**,/api/v1/strategies/**
-          filters:
-            - StripPrefix=0
-            - Authentication
-
-        - id: notice-service
-          uri: lb://notice-service
-          predicates:
-            - Path=/api/v1/notices/**
-          filters:
-            - StripPrefix=0
-            - Authentication
 
         - id: communication-service
           uri: lb://communication-service
@@ -76,51 +45,20 @@ spring:
             - StripPrefix=0
             - Authentication
 
-        - id: template-service
-          uri: lb://template-service
-          predicates:
-            - Path=/api/v1/templates/**
-          filters:
-            - StripPrefix=0
-            - Authentication
-
-        - id: report-service
-          uri: lb://report-service
-          predicates:
-            - Path=/api/v1/reports/**
-          filters:
-            - StripPrefix=0
-
-      # --- Common Gateway Config ---
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-      httpclient:
-        wiretap: true
-        response-timeout: 300s
-        max-header-size: 16KB
-      forwarded-headers-strategy: framework
 
-  servlet:
-    multipart:
-      enabled: true
-      max-file-size: 50MB
-      max-request-size: 50MB
-
-# --- Resilience4j for Gateway Stability ---
+# --- Resilience4j ---
 resilience4j:
   circuitbreaker:
     instances:
       default:
         registerHealthIndicator: true
         slidingWindowSize: 10
-        minimumNumberOfCalls: 5
-        permittedNumberOfCallsInHalfOpenState: 3
-        automaticTransitionFromOpenToHalfOpenEnabled: true
-        waitDurationInOpenState: 5s
         failureRateThreshold: 50
-        eventConsumerBufferSize: 10
+        waitDurationInOpenState: 5s
 
-# --- JWT Configuration for Token Validation ---
+# --- JWT (shared secret) ---
 jwt:
   secret: ${JWT_SECRET:MySecretKeyForJWTTokenGenerationMustBeAtLeast256BitsLongForHS256Algorithm}
-  expiration: ${JWT_EXPIRATION:86400000} # 24 hours in milliseconds
+  expiration: ${JWT_EXPIRATION:86400000}

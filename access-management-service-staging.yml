@@ -5,36 +5,9 @@ spring:
   application:
     name: access-management-service
 
-  config:
-    import: "configserver:http://config-server:8888/"
-
-  datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres_db:5432/staging_db}
-    username: ${SPRING_DATASOURCE_USERNAME:postgres}
-    password: ${SPRING_DATASOURCE_PASSWORD:}
-
-  redis:
-    host: ${REDIS_HOST:redis_cache}
-    port: ${REDIS_PORT:6379}
-
-  jpa:
-    hibernate:
-      ddl-auto: validate
-
-# Flyway specific - safe defaults for staging
-flyway:
-  baseline-on-migrate: true
-  out-of-order: false
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: when_authorized
-
-logging:
-  level:
-    com.finx.access: DEBUG
+# --- Security / Auth Service specific settings ---
+auth:
+  token:
+    issuer: finxbridge-staging
+  refresh-token:
+    expiry: 604800000 # 7 days
