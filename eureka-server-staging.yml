@@ -1,26 +1,23 @@
+server:
+  port: ${EUREKA_PORT:8761}
+
 spring:
   application:
     name: eureka-server
 
 eureka:
-  instance:
-    hostname: eureka-server
   client:
-    registerWithEureka: false
-    fetchRegistry: false
-    serviceUrl:
-      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+    register-with-eureka: false
+    fetch-registry: false
   server:
-    enable-self-preservation: false
-    eviction-interval-timer-in-ms: 5000
+    eviction-interval-timer-in-ms: 60000
+
+# Make sure other services use the DNS name 'eureka-server' to talk to this
+instance:
+  hostname: eureka-server
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,metrics
-  endpoint:
-    health:
-      show-details: always
-
-
+        include: health,info

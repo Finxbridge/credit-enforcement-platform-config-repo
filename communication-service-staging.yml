@@ -1,51 +1,35 @@
+server:
+  port: ${SERVER_PORT:8086}
+
 spring:
   application:
     name: communication-service
 
+  config:
+    import: "configserver:http://config-server:8888/"
+
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://postgres_db:5432/staging_db}
+    username: ${SPRING_DATASOURCE_USERNAME:postgres}
+    password: ${SPRING_DATASOURCE_PASSWORD:}
+
+  redis:
+    host: ${REDIS_HOST:redis_cache}
+    port: ${REDIS_PORT:6379}
+
   jpa:
-    database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
-    show-sql: ${SHOW_SQL:false}
-    properties:
-      hibernate:
-        format_sql: true
-        use_sql_comments: true
-        jdbc:
-          batch_size: 50
-        order_inserts: true
-        order_updates: true
 
-  flyway:
-    enabled: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+  endpoint:
+    health:
+      show-details: when_authorized
 
-  cache:
-    type: redis
-    redis:
-      time-to-live: 1800000 # 30 minutes
-      cache-null-values: false
-
-# Feign Client Configuration
-feign:
-  client:
-    config:
-      default:
-        connectTimeout: 5000
-        readTimeout: 10000
-      template-service:
-        connectTimeout: 5000
-        readTimeout: 10000
-  circuitbreaker:
-    enabled: true
-
-# NOTE: Third-party integration configurations (SMS, WhatsApp, Email, Payment, Dialer)
-# are stored in Redis cache and retrieved from third_party_integration_master table
-# No hardcoded credentials in application.yml for security
-
-springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui.html
-
-
+logging:
+  level:
+    com.finx.communication: DEBUG
