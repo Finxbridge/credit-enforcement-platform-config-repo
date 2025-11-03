@@ -36,7 +36,15 @@ spring:
           filters:
             - StripPrefix=2
             - Authentication
-
+        
+        - id: master-data-service
+          uri: lb://master-data-service
+          predicates:
+            - Path=/api/v1/master-data/**
+          filters:
+            - StripPrefix=2
+            - Authentication
+        
         - id: communication-service
           uri: lb://communication-service
           predicates:
