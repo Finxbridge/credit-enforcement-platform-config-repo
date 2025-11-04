@@ -3,4 +3,4 @@ server:
 
 spring:
   application:
-    name: master-data-service
+    name: case-sourcing-service

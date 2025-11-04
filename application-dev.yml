@@ -6,7 +6,7 @@ spring:
   cloud:
     config:
       fail-fast: true
-      uri: ${CONFIG_SERVER_URI:http://config-server:8888}
+      uri: ${CONFIG_SERVER_URI:http://localhost:8888}
       retry:
         max-attempts: 5
         initial-interval: 2000
@@ -15,14 +15,14 @@ spring:
 
   # --- Database Configuration (common) ---
   datasource:
-    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/staging_db}
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/dev_db}
     username: ${SPRING_DATASOURCE_USERNAME:admin}
     password: ${SPRING_DATASOURCE_PASSWORD:password}
     driver-class-name: org.postgresql.Driver
 
   # --- Redis (common caching layer) ---
   redis:
-    host: ${REDIS_HOST:redis_cache}
+    host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
 
   # --- JPA / Hibernate (safe for staging) ---
@@ -63,7 +63,7 @@ logging:
 # --- CORS and App Defaults ---
 app:
   cors:
-    allowed-origins: ${CORS_ALLOWED_ORIGINS:https://staging.yourdomain.com}
+    allowed-origins: ${CORS_ALLOWED_ORIGINS:http://localhost:3000,http://localhost:8080}
 
 # --- JVM Optimization ---
 java:

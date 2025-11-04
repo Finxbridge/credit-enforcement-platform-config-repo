@@ -44,6 +44,14 @@ spring:
           filters:
             - StripPrefix=2
             - Authentication
+
+        - id: case-sourcing-service
+          uri: lb://case-sourcing-service
+          predicates:
+            - Path=/api/v1/case/**
+          filters:
+            - StripPrefix=2
+            - Authentication
         
         - id: communication-service
           uri: lb://communication-service
