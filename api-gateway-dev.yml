@@ -52,6 +52,14 @@ spring:
           filters:
             - StripPrefix=2
             - Authentication
+
+        - id: allocation-reallocation-service
+          uri: lb://allocation-reallocation-service
+          predicates:
+            - Path=/api/v1/allocations/**, /api/v1/reallocations/**
+          filters:
+            - StripPrefix=2
+            - Authentication
         
         - id: communication-service
           uri: lb://communication-service
