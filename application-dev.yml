@@ -40,6 +40,11 @@ spring:
     baseline-on-migrate: true
     out-of-order: false
 
+eureka:
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
+    
 # --- Management & Monitoring ---
 management:
   endpoints:

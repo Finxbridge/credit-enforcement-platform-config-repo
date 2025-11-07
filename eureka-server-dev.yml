@@ -11,3 +11,6 @@ eureka:
     fetch-registry: false
   server:
     enable-self-preservation: true
+  instance:
+    hostname: localhost
+    prefer-ip-address: false
