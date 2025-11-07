@@ -24,10 +24,6 @@ spring:
   redis:
     host: ${REDIS_HOST:localhost}
     port: ${REDIS_PORT:6379}
-  
-  eureka:
-    instance:
-      hostname: localhost # Explicitly set hostname to localhost
 
   # --- JPA / Hibernate (safe for staging) ---
   jpa:
